@@ -290,11 +290,11 @@
 
             // --- LLMごとのペイロード構造を切り替え ---
             if (config.type === 'gemini') {
-                // Geminiのペイロード構造
+                // Geminiのペイロード構造を修正: 'config' を 'generationConfig' に変更
                 payload = {
                     contents: [{ parts: [{ text: `以下の投稿文を分析してください: ${userQuery}` }] }],
                     systemInstruction: { parts: [{ text: systemPrompt }] },
-                    config: {
+                    generationConfig: { // <-- 修正箇所
                         responseMimeType: "application/json",
                         responseSchema: responseSchema
                     }
