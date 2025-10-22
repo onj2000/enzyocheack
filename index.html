@@ -1,463 +1,463 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>炎上リスクチェッカー</title>
-    <!-- Tailwind CSS CDNの読み込み -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Interの読み込み -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7f9;
-        }
-        .risk-bar-bg {
-            background-color: #e5e7eb;
-        }
-        .score-1 { background-color: #10b981; } /* Green */
-        .score-2 { background-color: #f59e0b; } /* Yellow */
-        .score-3 { background-color: #ef4444; } /* Red */
-        .score-4 { background-color: #dc2626; } /* Dark Red */
-        .score-5 { background-color: #7f1d1d; } /* Deep Red */
-        
-        .result-card {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-            border-radius: 0.5rem;
-        }
-        
-        /* スピナーアニメーション */
-        .spinner {
-            border-top-color: #ffffff; /* スピナー色を白に変更 */
-            border-left-color: #ffffff; 
-            border-right-color: transparent;
-            border-bottom-color: transparent;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炎上リスクチェッカー</title>
+    <!-- Tailwind CSS CDNの読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Interの読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .risk-bar-bg {
+            background-color: #e5e7eb;
+        }
+        .score-1 { background-color: #10b981; } /* Green */
+        .score-2 { background-color: #f59e0b; } /* Yellow */
+        .score-3 { background-color: #ef4444; } /* Red */
+        .score-4 { background-color: #dc2626; } /* Dark Red */
+        .score-5 { background-color: #7f1d1d; } /* Deep Red */
+        
+        .result-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            border-radius: 0.5rem;
+        }
+        
+        /* スピナーアニメーション */
+        .spinner {
+            border-top-color: #ffffff; /* スピナー色を白に変更 */
+            border-left-color: #ffffff; 
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body class="p-4 sm:p-8">
 
-    <div class="max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-xl shadow-2xl">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2 border-b-4 border-blue-500 pb-2">
-            炎上リスクチェッカー
-        </h1>
-        <p class="text-gray-600 mb-6 sm:mb-8">
-            投稿予定の文章を入力し、AIによる炎上リスクの自動評価を行います。
-            （攻撃性、差別性、誤解の可能性、時事性・話題性の4軸でチェック）
-        </p>
+    <div class="max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-xl shadow-2xl">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2 border-b-4 border-blue-500 pb-2">
+            炎上リスクチェッカー
+        </h1>
+        <p class="text-gray-600 mb-6 sm:mb-8">
+            投稿予定の文章を入力し、AIによる炎上リスクの自動評価を行います。<br>
+            （攻撃性、差別性、誤解の可能性、時事性・話題性の4軸でチェック）
+        </p>
 
-        <!-- モデル選択/APIキーエリア -->
-        <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <!-- モデル選択 -->
-            <div class="flex-1">
-                <label for="model-select" class="block text-lg font-semibold text-gray-700 mb-2">使用するAIモデル</label>
-                <select id="model-select" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800">
-                    <option value="gemini-flash">Gemini 2.5 Flash</option>
-                    <option value="gemini-nano">Gemini 2.5 Nano</option>
-                    <option value="claude">Claude 3 Sonnet</option>
-                    <option value="openai">GPT-4o-mini</option>
-                </select>
-            </div>
-            
-            <!-- APIキー入力 -->
-            <div class="flex-1">
-                <label for="api-key-input" class="block text-lg font-semibold text-gray-700 mb-2">APIキー</label>
-                <input type="password" id="api-key-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800" placeholder="APIキーを入力 (必須)">
-            </div>
-        </div>
+        <!-- モデル選択/APIキーエリア -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <!-- モデル選択 -->
+            <div class="flex-1">
+                <label for="model-select" class="block text-lg font-semibold text-gray-700 mb-2">使用するAIモデル</label>
+                <select id="model-select" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800">
+                    <option value="gemini-flash">Gemini 2.5 Flash</option>
+                    <!-- 修正: NanoをMiniに置き換え --> 
+                    <option value="claude">Claude 3 Sonnet</option>
+                    <option value="openai">GPT-4o-mini</option>
+                </select>
+              </div>
+            
+            <!-- APIキー入力 -->
+            <div class="flex-1">
+                <label for="api-key-input" class="block text-lg font-semibold text-gray-700 mb-2">APIキー</label>
+                <input type="password" id="api-key-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800" placeholder="APIキーを入力 (必須)">
+            </div>
+        </div>
 
-        <!-- 入力エリア -->
-        <div class="mb-6">
-            <label for="input-text" class="block text-lg font-semibold text-gray-700 mb-2">チェックしたい投稿文</label>
-            <textarea id="input-text" rows="8" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800" placeholder="ここに投稿文を入力してください..."></textarea>
-        </div>
-        
-        <!-- ボタン -->
-        <button id="check-button" onclick="checkRisk()" class="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 flex items-center justify-center">
-            <span id="button-text">リスクチェックを実行</span>
-            <div id="loading-spinner" class="spinner h-5 w-5 border-4 rounded-full ml-3 hidden"></div>
-        </button>
+        <!-- 入力エリア -->
+        <div class="mb-6">
+            <label for="input-text" class="block text-lg font-semibold text-gray-700 mb-2">チェックしたい投稿文</label>
+            <textarea id="input-text" rows="8" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-800" placeholder="ここに投稿文を入力してください..."></textarea>
+        </div>
+        
+        <!-- ボタン -->
+        <button id="check-button" onclick="checkRisk()" class="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 flex items-center justify-center">
+            <span id="button-text">リスクチェックを実行</span>
+            <div id="loading-spinner" class="spinner h-5 w-5 border-4 rounded-full ml-3 hidden"></div>
+        </button>
 
-        <!-- 結果表示エリア -->
-        <div id="results-container" class="mt-10 pt-6 border-t border-gray-200 hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">判定結果</h2>
-        </div>
+        <!-- 結果表示エリア -->
+        <div id="results-container" class="mt-10 pt-6 border-t border-gray-200 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">判定結果</h2>
+        </div>
 
-        <!-- APIキーの取得方法と注意点 -->
-        <div class="mt-10 pt-6 border-t border-gray-100">
-            <h3 class="text-xl font-bold text-gray-700 mb-3">APIキーの取得方法と使用上の注意点</h3>
-            <p class="text-sm text-gray-600 mb-4">本ツールは、外部のLLM（大規模言語モデル）APIを利用して分析を実行します。ご利用には、選択したモデルに応じたAPIキーが必要です。</p>
-            
-            <div class="space-y-4 text-sm text-gray-600">
-                <p><strong>1. Gemini (Flash / Nano) のAPIキー取得:</strong></p>
-                <ul class="list-disc list-inside ml-4 space-y-1">
-                    <li><a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" class="text-blue-500 hover:text-blue-600">Google AI Studio (Google AI Developer Console)</a>にてキーを発行してください。</li>
-                    <li>Nanoモデルは軽量ですが、JSONの整形精度がFlashや他のモデルより劣る場合があります。</li>
-                </ul>
+        <!-- APIキーの取得方法と注意点 -->
+        <div class="mt-10 pt-6 border-t border-gray-100">
+            <h3 class="text-xl font-bold text-gray-700 mb-3">APIキーの取得方法と使用上の注意点</h3>
+            <p class="text-sm text-gray-600 mb-4">本ツールは、外部のLLM（大規模言語モデル）APIを利用して分析を実行します。ご利用には、選択したモデルに応じたAPIキーが必要です。</p>
+            
+            <div class="space-y-4 text-sm text-gray-600">
+                <p><strong>1. Gemini (Flash / Mini) のAPIキー取得:</strong></p>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" class="text-blue-500 hover:text-blue-600">Google AI Studio (Google AI Developer Console)</a>にてキーを発行してください。</li>
+                    <li>**注:** Gemini Miniは、ユーザーの要求に基づく名称です。APIの安定性のために、UIでMiniを選択した場合でも、APIでは**Gemini 2.5 Flash**が使用されます。</li>
+                </ul>
 
-                <p><strong>2. Claude (Sonnet) のAPIキー取得:</strong></p>
-                <ul class="list-disc list-inside ml-4 space-y-1">
-                    <li><a href="https://www.anthropic.com/api" target="_blank" class="text-blue-500 hover:text-blue-600">Anthropicの公式サイト</a>でアカウントを作成し、APIキーを発行してください。</li>
-                </ul>
+                <p><strong>2. Claude (Sonnet) のAPIキー取得:</strong></p>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><a href="https://www.anthropic.com/api" target="_blank" class="text-blue-500 hover:text-blue-600">Anthropicの公式サイト</a>でアカウントを作成し、APIキーを発行してください。</li>
+                </ul>
 
-                <p><strong>3. GPT (GPT-4o-mini) のAPIキー取得:</strong></p>
-                <ul class="list-disc list-inside ml-4 space-y-1">
-                    <li><a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-500 hover:text-blue-600">OpenAI Platformの公式サイト</a>でキーを発行してください。</li>
-                </ul>
+                <p><strong>3. GPT (GPT-4o-mini) のAPIキー取得:</strong></p>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-500 hover:text-blue-600">OpenAI Platformの公式サイト</a>でキーを発行してください。</li>
+                </ul>
 
-                <p class="mt-4 font-semibold text-red-700">【重要】使用上の注意点</p>
-                <ul class="list-disc list-inside ml-4 space-y-1">
-                    <li>APIキーは**外部サービスへのアクセス認証情報**であり、厳重に管理してください。</li>
-                    <li>本アプリケーションでは、セキュリティのため、**分析実行後にAPIキー入力欄の値を自動的に破棄**しています。</li>
-                    <li>API利用には、各サービスに応じた**費用が発生する場合がございます（無料枠あり）**。コストにご注意の上、ご利用ください。</li>
-                </ul>
-            </div>
-        </div>
-
-
-        <!-- メッセージモーダル (alertの代わり) -->
-        <div id="message-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center p-4 z-50" onclick="closeModal()">
-            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full" onclick="event.stopPropagation()">
-                <h3 id="modal-title" class="text-xl font-bold text-gray-800 mb-3"></h3>
-                <p id="modal-message" class="text-gray-600 mb-4"></p>
-                <button onclick="closeModal()" class="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">閉じる</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- API 設定エリア ---
-        const MAX_RETRIES = 3;
-
-        // 各モデルのAPI設定を定義 (ユーザーの選択肢に合わせる)
-        const modelConfigs = {
-            'gemini-flash': { // モデルIDを明確化
-                type: 'gemini',
-                model: 'gemini-2.5-flash-preview-09-2025', 
-                apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent",
-                headers: { 'Content-Type': 'application/json' },
-            },
-            'gemini-nano': { // Gemini 2.5 Nanoを追加
-                type: 'gemini',
-                model: 'gemini-2.5-nano-preview-09-2025', 
-                apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-nano-preview-09-2025:generateContent",
-                headers: { 'Content-Type': 'application/json' },
-            },
-            'claude': {
-                type: 'claude',
-                model: 'claude-3-sonnet-20240229', 
-                apiUrl: "https://api.anthropic.com/v1/messages", 
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'anthropic-version': '2023-06-01'
-                },
-            },
-            'openai': {
-                type: 'openai_compatible',
-                model: 'gpt-4o-mini', 
-                apiUrl: "https://api.openai.com/v1/chat/completions", 
-                headers: { 
-                    'Content-Type': 'application/json',
-                },
-            }
-        };
-
-        // LLMに出力させるJSONの構造定義 (全モデル共通)
-        const responseSchema = {
-            type: "OBJECT",
-            properties: {
-                risk_score: { type: "INTEGER", description: "4軸のスコアの平均（四捨五入）または総合的なリスク評価を示す1から5の整数スコア。" },
-                risk_summary: { type: "STRING", description: "総合スコアの理由と文章全体のリスクを一言で要約。" },
-                evaluation_points: {
-                    type: "ARRAY",
-                    description: "各評価軸ごとの詳細な分析。",
-                    items: {
-                        type: "OBJECT",
-                        properties: {
-                            axis: { type: "STRING", description: "評価軸名 (例: 攻撃性, 差別性, 誤解の可能性, 時事性・話題性)" },
-                            score: { type: "INTEGER", description: "1から5の整数スコア。" },
-                            reason: { type: "STRING", description: "そのスコアになった具体的な理由。" }
-                        },
-                        propertyOrdering: ["axis", "score", "reason"]
-                    }
-                },
-                improvement_suggestion: { type: "STRING", description: "炎上リスクを低減するための具体的な改善提案。" }
-            },
-            propertyOrdering: ["risk_score", "risk_summary", "evaluation_points", "improvement_suggestion"]
-        };
+                <p class="mt-4 font-semibold text-red-700">【重要】使用上の注意点</p>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li>APIキーは**外部サービスへのアクセス認証情報**であり、厳重に管理してください。</li>
+                    <li>本アプリケーションでは、セキュリティのため、**分析実行後にAPIキー入力欄の値を自動的に破棄**しています。</li>
+                    <li>API利用には、各サービスに応じた**費用が発生する場合がございます（無料枠あり）**。コストにご注意の上、ご利用ください。</li>
+                </ul>
+            </div>
+        </div>
 
 
-        // UI要素の取得
-        const inputText = document.getElementById('input-text');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const checkButton = document.getElementById('check-button');
-        const buttonText = document.getElementById('button-text');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const resultsContainer = document.getElementById('results-container');
-        const messageModal = document.getElementById('message-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalMessage = document.getElementById('modal-message');
+        <!-- メッセージモーダル (alertの代わり) -->
+        <div id="message-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center p-4 z-50" onclick="closeModal()">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full" onclick="event.stopPropagation()">
+                <h3 id="modal-title" class="text-xl font-bold text-gray-800 mb-3"></h3>
+                <p id="modal-message" class="text-gray-600 mb-4"></p>
+                <button onclick="closeModal()" class="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">閉じる</button>
+            </div>
+        </div>
+    </div>
 
-        // モーダル表示関数
-        function showModal(title, message) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            messageModal.classList.remove('hidden');
-            messageModal.classList.add('flex');
-        }
+    <script>
+        // --- API 設定エリア ---
+        const MAX_RETRIES = 3;
 
-        // モーダル非表示関数
-        function closeModal() {
-            messageModal.classList.add('hidden');
-            messageModal.classList.remove('flex');
-        }
+        // 各モデルのAPI設定を定義 (ユーザーの選択肢に合わせる)
+        const modelConfigs = {
+            'gemini-flash': { // Gemini 2.5 Flash
+                type: 'gemini',
+                model: 'gemini-2.5-flash', 
+                apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+                headers: { 'Content-Type': 'application/json' },
+            },
+            'gemini-mini': { // 修正: NanoをMiniに置き換え。API利用不可のためFlashにフォールバック
+                type: 'gemini',
+                model: 'gemini-2.5-flash', 
+                apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+                headers: { 'Content-Type': 'application/json' },
+            },
+            'claude': {
+                type: 'claude',
+                model: 'claude-3-sonnet-20240229', 
+                apiUrl: "https://api.anthropic.com/v1/messages", 
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'anthropic-version': '2023-06-01'
+                },
+            },
+            'openai': {
+                type: 'openai_compatible',
+                model: 'gpt-4o-mini', 
+                apiUrl: "https://api.openai.com/v1/chat/completions", 
+                headers: { 
+                    'Content-Type': 'application/json',
+                },
+            }
+        };
 
-        // UIの状態制御
-        function setUILoading(isLoading) {
-            checkButton.disabled = isLoading;
-            document.getElementById('model-select').disabled = isLoading;
-            apiKeyInput.disabled = isLoading;
-            if (isLoading) {
-                buttonText.textContent = '分析中...';
-                loadingSpinner.classList.remove('hidden');
-                resultsContainer.classList.add('hidden');
-            } else {
-                buttonText.textContent = 'リスクチェックを実行';
-                loadingSpinner.classList.add('hidden');
-            }
-        }
-
-        // スコアに基づいた色クラスを返す関数
-        function getScoreColorClass(score) {
-            if (score <= 1) return 'score-1';
-            if (score <= 2) return 'score-2';
-            if (score <= 3) return 'score-3';
-            if (score <= 4) return 'score-4';
-            return 'score-5';
-        }
-
-        // リスクバーHTML生成
-        function createRiskBar(score, maxScore = 5) {
-            const percentage = (score / maxScore) * 100;
-            const colorClass = getScoreColorClass(score);
-            
-            return `
-                <div class="flex items-center space-x-3 w-full">
-                    <span class="text-lg font-bold w-12 text-center text-gray-700">${score} / ${maxScore}</span>
-                    <div class="risk-bar-bg flex-grow h-4 rounded-full overflow-hidden">
-                        <div class="${colorClass} h-full rounded-full transition-all duration-500" style="width: ${percentage}%;"></div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // 炎上リスクチェック実行関数
-        async function checkRisk() {
-            const userQuery = inputText.value.trim();
-            const LLM_API_KEY = apiKeyInput.value.trim();
-            const selectedModelId = document.getElementById('model-select').value;
-            const config = modelConfigs[selectedModelId];
-
-
-            if (!userQuery) {
-                showModal("エラー", "投稿文を入力してください。");
-                return;
-            }
-            if (!LLM_API_KEY) {
-                showModal("エラー", "APIキーを入力してください。");
-                return;
-            }
-
-            setUILoading(true);
-            resultsContainer.innerHTML = '<h2 class="text-2xl font-bold text-gray-800 mb-6">判定結果</h2>';
+        // LLMに出力させるJSONの構造定義 (全モデル共通)
+        const responseSchema = {
+            type: "OBJECT",
+            properties: {
+                risk_score: { type: "INTEGER", description: "4軸のスコアの平均（四捨五入）または総合的なリスク評価を示す1から5の整数スコア。" },
+                risk_summary: { type: "STRING", description: "総合スコアの理由と文章全体のリスクを一言で要約。" },
+                evaluation_points: {
+                    type: "ARRAY",
+                    description: "各評価軸ごとの詳細な分析。",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            axis: { type: "STRING", description: "評価軸名 (例: 攻撃性, 差別性, 誤解の可能性, 時事性・話題性)" },
+                            score: { type: "INTEGER", description: "1から5の整数スコア。" },
+                            reason: { type: "STRING", description: "そのスコアになった具体的な理由。" }
+                        },
+                        propertyOrdering: ["axis", "score", "reason"]
+                    }
+                },
+                improvement_suggestion: { type: "STRING", description: "炎上リスクを低減するための具体的な改善提案。" }
+            },
+            propertyOrdering: ["risk_score", "risk_summary", "evaluation_points", "improvement_suggestion"]
+        };
 
 
-            // System Promptの定義
-            const systemPrompt = `
-                あなたはプロのSNSリスク管理専門家であり、投稿文の炎上リスクを分析するAIです。
-                入力された日本語のテキストに対し、以下の4つの軸で1〜5点（1が最低リスク、5が最高リスク）で評価し、
-                総合スコア、要約、評価詳細、改善提案を厳格なJSON形式でのみ出力してください。
-                外部検索機能は使用できないため、AIの持つ知識に基づいて判断してください。
-                出力はJSONオブジェクトのみとし、前後にMarkdownのマークダウン（例：\`\`\`json）を含めないでください。
-            `;
-            
-            let payload;
+        // UI要素の取得
+        const inputText = document.getElementById('input-text');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const checkButton = document.getElementById('check-button');
+        const buttonText = document.getElementById('button-text');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const resultsContainer = document.getElementById('results-container');
+        const messageModal = document.getElementById('message-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
 
-            // --- LLMごとのペイロード構造を切り替え ---
-            if (config.type === 'gemini') {
-                // Geminiのペイロード構造を修正: 'config' を 'generationConfig' に変更
-                payload = {
-                    contents: [{ parts: [{ text: `以下の投稿文を分析してください: ${userQuery}` }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    generationConfig: { // <-- 修正箇所
-                        responseMimeType: "application/json",
-                        responseSchema: responseSchema
-                    }
-                };
-                
-            } else if (config.type === 'openai_compatible') {
-                // OpenAI互換API (GPT-4o-mini) のペイロード構造
-                payload = {
-                    model: config.model,
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        { role: "user", content: `以下の投稿文を分析してください: ${userQuery}` }
-                    ],
-                    response_format: { type: "json_object" } 
-                };
-            } else if (config.type === 'claude') {
-                // Anthropic Claudeのペイロード構造
-                payload = {
-                    model: config.model,
-                    messages: [
-                        { role: "user", content: `以下の投稿文を分析してください: ${userQuery}` }
-                    ],
-                    system: systemPrompt,
-                    max_tokens: 4096 
-                };
-            }
+        // モーダル表示関数
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            messageModal.classList.remove('hidden');
+            messageModal.classList.add('flex');
+        }
 
-            try {
-                // API呼び出しを実行
-                const resultJson = await callLLMApi(payload, config, LLM_API_KEY);
-                renderResults(resultJson);
-            } catch (error) {
-                console.error("LLM API Error:", error);
-                showModal("エラー", `AIによるリスク判定中にエラーが発生しました。詳細: ${error.message}`);
-            } finally {
-                setUILoading(false);
-                // 実行後、APIキーを破棄 (セキュリティ対策)
-                apiKeyInput.value = "";
-            }
-        }
+        // モーダル非表示関数
+        function closeModal() {
+            messageModal.classList.add('hidden');
+            messageModal.classList.remove('flex');
+        }
 
-        // LLM API呼び出しと指数的バックオフの実装
-        async function callLLMApi(payload, config, LLM_API_KEY) {
-            for (let i = 0; i < MAX_RETRIES; i++) {
-                try {
-                    let fetchUrl = config.apiUrl;
-                    let fetchHeaders = { ...config.headers };
+        // UIの状態制御
+        function setUILoading(isLoading) {
+            checkButton.disabled = isLoading;
+            document.getElementById('model-select').disabled = isLoading;
+            apiKeyInput.disabled = isLoading;
+            if (isLoading) {
+                buttonText.textContent = '分析中...';
+                loadingSpinner.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
+            } else {
+                buttonText.textContent = 'リスクチェックを実行';
+                loadingSpinner.classList.add('hidden');
+            }
+        }
 
-                    // API Key/Header handling
-                    if (config.type === 'gemini') {
-                        // GeminiはクエリパラメータでAPIキーを渡す
-                        fetchUrl = `${config.apiUrl}?key=${LLM_API_KEY}`;
-                    } else if (config.type === 'openai_compatible') {
-                        // OpenAI互換APIはAuthorizationヘッダーでAPIキーを渡す
-                        fetchHeaders['Authorization'] = `Bearer ${LLM_API_KEY}`;
-                    } else if (config.type === 'claude') {
-                        // Claudeはx-api-keyヘッダーでAPIキーを渡す
-                        fetchHeaders['x-api-key'] = LLM_API_KEY;
-                    }
+        // スコアに基づいた色クラスを返す関数
+        function getScoreColorClass(score) {
+            if (score <= 1) return 'score-1';
+            if (score <= 2) return 'score-2';
+            if (score <= 3) return 'score-3';
+            if (score <= 4) return 'score-4';
+            return 'score-5';
+        }
 
-                    const response = await fetch(fetchUrl, {
-                        method: 'POST',
-                        headers: fetchHeaders,
-                        body: JSON.stringify(payload)
-                    });
+        // リスクバーHTML生成
+        function createRiskBar(score, maxScore = 5) {
+            const percentage = (score / maxScore) * 100;
+            const colorClass = getScoreColorClass(score);
+            
+            return `
+                <div class="flex items-center space-x-3 w-full">
+                    <span class="text-lg font-bold w-12 text-center text-gray-700">${score} / ${maxScore}</span>
+                    <div class="risk-bar-bg flex-grow h-4 rounded-full overflow-hidden">
+                        <div class="${colorClass} h-full rounded-full transition-all duration-500" style="width: ${percentage}%;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 炎上リスクチェック実行関数
+        async function checkRisk() {
+            const userQuery = inputText.value.trim();
+            const LLM_API_KEY = apiKeyInput.value.trim();
+            const selectedModelId = document.getElementById('model-select').value;
+            const config = modelConfigs[selectedModelId];
 
-                    if (!response.ok) {
-                        const errorBody = await response.json();
-                        throw new Error(`APIステータス ${response.status}: ${errorBody.error?.message || JSON.stringify(errorBody)}`);
-                    }
 
-                    const result = await response.json();
-                    
-                    let jsonText;
+            if (!userQuery) {
+                showModal("エラー", "投稿文を入力してください。");
+                return;
+            }
+            if (!LLM_API_KEY) {
+                showModal("エラー", "APIキーを入力してください。");
+                return;
+            }
 
-                    // JSONテキスト抽出ロジック
-                    if (config.type === 'gemini') {
-                        jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    } else if (config.type === 'openai_compatible') {
-                        jsonText = result.choices?.[0]?.message?.content;
-                    } else if (config.type === 'claude') {
-                        jsonText = result.content?.[0]?.text;
-                    }
+            setUILoading(true);
+            resultsContainer.innerHTML = '<h2 class="text-2xl font-bold text-gray-800 mb-6">判定結果</h2>';
 
-                    if (!jsonText) {
-                        throw new Error("APIレスポンスからJSONテキストを抽出できませんでした。");
-                    }
-                    
-                    // JSON文字列をパースし、不要なマークダウンを削除
-                    const cleanedJsonText = jsonText.replace(/```json\n|```/g, '').trim();
-                    return JSON.parse(cleanedJsonText);
 
-                } catch (error) {
-                    if (i === MAX_RETRIES - 1) {
-                        throw error;
-                    }
-                    // 指数的バックオフ (1s, 2s, 4s...)
-                    const delay = Math.pow(2, i) * 1000;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-        }
-        
-        // 結果をHTMLとしてレンダリングする関数
-        function renderResults(data) {
-            resultsContainer.classList.remove('hidden');
-            const overallColor = getScoreColorClass(data.risk_score);
+            // System Promptの定義
+            const systemPrompt = `
+                あなたはプロのSNSリスク管理専門家であり、投稿文の炎上リスクを分析するAIです。
+                入力された日本語のテキストに対し、以下の4つの軸で1〜5点（1が最低リスク、5が最高リスク）で評価し、
+                総合スコア、要約、評価詳細、改善提案を厳格なJSON形式でのみ出力してください。
+                外部検索機能は使用できないため、AIの持つ知識に基づいて判断してください。
+                出力はJSONオブジェクトのみとし、前後にMarkdownのマークダウン（例：\`\`\`json）を含めないでください。
+            `;
+            
+            let payload;
 
-            let html = `
-                <!-- 総合評価セクション -->
-                <div class="result-card bg-gray-50 p-6 mb-8 border-t-8 ${overallColor.replace('score', 'border')}">
-                    <h3 class="text-2xl font-extrabold text-gray-800 mb-2">総合リスク評価</h3>
-                    <div class="flex items-center mb-4">
-                        <span class="text-5xl font-black text-gray-900 mr-4">${data.risk_score} / 5</span>
-                        <p class="text-xl font-semibold text-gray-700">${data.risk_summary}</p>
-                    </div>
-                    ${createRiskBar(data.risk_score)}
-                </div>
+            // --- LLMごとのペイロード構造を切り替え ---
+            if (config.type === 'gemini') {
+                // Geminiのペイロード構造
+                payload = {
+                    contents: [{ parts: [{ text: `以下の投稿文を分析してください: ${userQuery}` }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema
+                    }
+                };
+                
+            } else if (config.type === 'openai_compatible') {
+                // OpenAI互換API (GPT-4o-mini) のペイロード構造
+                payload = {
+                    model: config.model,
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: `以下の投稿文を分析してください: ${userQuery}` }
+                    ],
+                    response_format: { type: "json_object" } 
+                };
+            } else if (config.type === 'claude') {
+                // Anthropic Claudeのペイロード構造
+                payload = {
+                    model: config.model,
+                    messages: [
+                        { role: "user", content: `以下の投稿文を分析してください: ${userQuery}` }
+                    ],
+                    system: systemPrompt,
+                    max_tokens: 4096 
+                };
+            }
 
-                <!-- 詳細評価セクション -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            `;
+            try {
+                // API呼び出しを実行
+                const resultJson = await callLLMApi(payload, config, LLM_API_KEY);
+                renderResults(resultJson);
+            } catch (error) {
+                console.error("LLM API Error:", error);
+                showModal("エラー", `AIによるリスク判定中にエラーが発生しました。詳細: ${error.message}`);
+            } finally {
+                setUILoading(false);
+                // 実行後、APIキーを破棄 (セキュリティ対策)
+                apiKeyInput.value = "";
+            }
+        }
 
-            data.evaluation_points.forEach(point => {
-                const pointColor = getScoreColorClass(point.score);
-                html += `
-                    <div class="result-card bg-white p-5 border-l-4 ${pointColor.replace('score', 'border')} shadow-md">
-                        <h4 class="text-xl font-bold text-gray-800 mb-2">${point.axis} (${point.score} / 5)</h4>
-                        ${createRiskBar(point.score)}
-                        <p class="text-gray-600 mt-3"><span class="font-semibold">理由:</span> ${point.reason}</p>
-                    </div>
-                `;
-            });
+        // LLM API呼び出しと指数的バックオフの実装
+        async function callLLMApi(payload, config, LLM_API_KEY) {
+            for (let i = 0; i < MAX_RETRIES; i++) {
+                try {
+                    let fetchUrl = config.apiUrl;
+                    let fetchHeaders = { ...config.headers };
 
-            html += `
-                </div>
+                    // API Key/Header handling
+                    if (config.type === 'gemini') {
+                        // GeminiはクエリパラメータでAPIキーを渡す
+                        fetchUrl = `${config.apiUrl}?key=${LLM_API_KEY}`;
+                    } else if (config.type === 'openai_compatible') {
+                        // OpenAI互換APIはAuthorizationヘッダーでAPIキーを渡す
+                        fetchHeaders['Authorization'] = `Bearer ${LLM_API_KEY}`;
+                    } else if (config.type === 'claude') {
+                        // Claudeはx-api-keyヘッダーでAPIキーを渡す
+                        fetchHeaders['x-api-key'] = LLM_API_KEY;
+                    }
 
-                <!-- 改善提案セクション -->
-                <div class="result-card bg-yellow-50 p-6 border-l-4 border-yellow-500 shadow-lg mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-3 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M16 12h1m-1.636 6.364l.707-.707M12 20h.01M6.364 17.636l-.707.707M7.05 15.11a5 5 0 0110.897 0M12 18a6 6 0 100-12 6 6 0 000 12z" />
-                        </svg>
-                        改善提案
-                    </h3>
-                    <p class="text-gray-700 leading-relaxed">${data.improvement_suggestion}</p>
-                </div>
-                
-                <!-- フィードバック/報告セクション (簡略化) -->
-                <div class="result-card bg-red-50 p-6 border-l-4 border-red-500 shadow-lg">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-3 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938-12a1 1 0 011.026-.815l.07-.023A1 1 0 018.06 6.257l.08.017A1 1 0 019 7.155V14a1 1 0 01-1 1H6a1 1 0 01-1-1V7.155a1 1 0 01.076-.856z" />
-                        </svg>
-                        結果へのフィードバック
-                    </h3>
-                    <p class="text-gray-700 mb-4">この判定結果が不正確であると感じた場合は、コンソールをご確認ください。（機能は削除されました）</p>
-                </div>
-            `;
+                    const response = await fetch(fetchUrl, {
+                        method: 'POST',
+                        headers: fetchHeaders,
+                        body: JSON.stringify(payload)
+                    });
 
-            resultsContainer.innerHTML += html;
-        }
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        throw new Error(`APIステータス ${response.status}: ${errorBody.error?.message || JSON.stringify(errorBody)}`);
+                    }
 
-    </script>
+                    const result = await response.json();
+                    
+                    let jsonText;
+
+                    // JSONテキスト抽出ロジック
+                    if (config.type === 'gemini') {
+                        jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    } else if (config.type === 'openai_compatible') {
+                        jsonText = result.choices?.[0]?.message?.content;
+                    } else if (config.type === 'claude') {
+                        jsonText = result.content?.[0]?.text;
+                    }
+
+                    if (!jsonText) {
+                        throw new Error("APIレスポンスからJSONテキストを抽出できませんでした。");
+                    }
+                    
+                    // JSON文字列をパースし、不要なマークダウンを削除
+                    const cleanedJsonText = jsonText.replace(/```json\n|```/g, '').trim();
+                    return JSON.parse(cleanedJsonText);
+
+                } catch (error) {
+                    if (i === MAX_RETRIES - 1) {
+                        throw error;
+                    }
+                    // 指数的バックオフ (1s, 2s, 4s...)
+                    const delay = Math.pow(2, i) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+        // 結果をHTMLとしてレンダリングする関数
+        function renderResults(data) {
+            resultsContainer.classList.remove('hidden');
+            const overallColor = getScoreColorClass(data.risk_score);
+
+            let html = `
+                <!-- 総合評価セクション -->
+                <div class="result-card bg-gray-50 p-6 mb-8 border-t-8 ${overallColor.replace('score', 'border')}">
+                    <h3 class="text-2xl font-extrabold text-gray-800 mb-2">総合リスク評価</h3>
+                    <div class="flex items-center mb-4">
+                        <span class="text-5xl font-black text-gray-900 mr-4">${data.risk_score} / 5</span>
+                        <p class="text-xl font-semibold text-gray-700">${data.risk_summary}</p>
+                    </div>
+                    ${createRiskBar(data.risk_score)}
+                </div>
+
+                <!-- 詳細評価セクション -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            `;
+
+            data.evaluation_points.forEach(point => {
+                const pointColor = getScoreColorClass(point.score);
+                html += `
+                    <div class="result-card bg-white p-5 border-l-4 ${pointColor.replace('score', 'border')} shadow-md">
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">${point.axis} (${point.score} / 5)</h4>
+                        ${createRiskBar(point.score)}
+                        <p class="text-gray-600 mt-3"><span class="font-semibold">理由:</span> ${point.reason}</p>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+
+                <!-- 改善提案セクション -->
+                <div class="result-card bg-yellow-50 p-6 border-l-4 border-yellow-500 shadow-lg mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M16 12h1m-1.636 6.364l.707-.707M12 20h.01M6.364 17.636l-.707.707M7.05 15.11a5 5 0 0110.897 0M12 18a6 6 0 100-12 6 6 0 000 12z" />
+                        </svg>
+                        改善提案
+                    </h3>
+                    <p class="text-gray-700 leading-relaxed">${data.improvement_suggestion}</p>
+                </div>
+                
+                <!-- フィードバック/報告セクション (簡略化) -->
+                <div class="result-card bg-red-50 p-6 border-l-4 border-red-500 shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938-12a1 1 1 0 011.026-.815l.07-.023A1 1 0 018.06 6.257l.08.017A1 1 0 019 7.155V14a1 1 0 01-1 1H6a1 1 0 01-1-1V7.155a1 1 0 01.076-.856z" />
+                        </svg>
+                        結果へのフィードバック
+                    </h3>
+                    <p class="text-gray-700 mb-4">この判定結果が不正確であると感じた場合は、コンソールをご確認ください。（機能は削除されました）</p>
+                </div>
+            `;
+
+            resultsContainer.innerHTML += html;
+        }
+
+    </script>
 </body>
 </html>
